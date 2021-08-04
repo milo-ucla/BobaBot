@@ -4,11 +4,17 @@ import os
 import requests
 import json
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 import random
 import spacy
 nlp = spacy.load("en_core_web_sm")
 client = discord.Client()
+mongoclient = MongoClient("mongodb+srv://dbuser:YlxiFoOkwEWnwgYt@cluster0.rhw7i.mongodb.net/")
+db = client.boba_db
+
+boba_count = db.boba_count
+
 load_dotenv()
 
 '''
@@ -84,7 +90,24 @@ async def on_message(message):
         await message.channel.send(my_message)
 
     elif message.content.startswith('!boba'):
-        my_message = "I love boba!\n{This feature is under development}"
+        user_query = {
+            "user": client.user,
+        }
+
+        query_user = boba_count.find_one(user_query)
+        if query_user is None:
+            count = 0
+            user_query["boba_count"] = count
+            r = boba_count.insert_one(user_query)
+            print(r)
+        else: 
+            count = query_user.count + 1
+            boba_count.delete_one(user_query)
+            user_query["boba_count"] = count
+            r = boba_count.insert_one(user_query)
+            print(r)
+
+        my_message = f"{client.user}'s boba count is {count}"
         await message.channel.send(my_message)
 
 client.run(os.getenv('TOKEN'))
