@@ -100,7 +100,16 @@ async def on_message(message):
             user_query["boba_count"] = count
             r = boba_count.insert_one(user_query)
             print(r)
-        else: 
+        else:
+            filter = { 'user': client.user }
+  
+            # Values to be updated.
+            newvalues = { "$set": { 'quantity': query_user.count + 1 } }
+            
+            # Using update_one() method for single 
+            # updation.
+            boba_count.update_one(filter, newvalues) 
+
             count = query_user.count + 1
             boba_count.delete_one(user_query)
             user_query["boba_count"] = count
