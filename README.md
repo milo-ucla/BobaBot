@@ -22,5 +22,5 @@ we will not sell or distribute this information to any third parties. By pinging
 contents of that message stored, as well as some metadata and user information visible at the time of sending. 
 
 #TOS
-By using this bot you are agreeing to the terms in our license (MIT) and agree to use the bot in accordance with Terms and Conditions of Discord.
+By using this bot you are agreeing to the terms in our license and agree to use the bot in accordance with Terms and Conditions of Discord.
 There is no warranty agreement. This is open-source code, use at your own risk. 
