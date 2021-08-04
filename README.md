@@ -9,7 +9,7 @@ as well as make sure that you have a valid discord TOKEN to use with your bot. S
 all commands begin with `!`
 ### boba?
 the bot will tell you if you should get boba
-### bobacount 
+### boba
 the bot will tell you how much boba you have logged
 ### boba *integer*
 the bot will log you as having consumed *int* bobas. Accepts negative numbers. Default is 1.
