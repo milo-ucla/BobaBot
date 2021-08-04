@@ -10,6 +10,8 @@ import random
 import spacy
 nlp = spacy.load("en_core_web_sm")
 client = discord.Client()
+
+# 
 mongoclient = MongoClient("mongodb+srv://dbuser:YlxiFoOkwEWnwgYt@cluster0.rhw7i.mongodb.net/")
 db = client.boba_db
 
@@ -72,6 +74,8 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
+    
+    
 
     if message.content.startswith('!quote'):
         quote = get_quote()
@@ -90,6 +94,12 @@ async def on_message(message):
         await message.channel.send(my_message)
 
     elif message.content.startswith('!boba'):
+        word_list = message.split(" ")
+        if len(word_list) > 2:
+            send = f"Use the boba count with 1 argument"
+            await message.channel.send(send)
+            return
+
         user_query = {
             "user": client.user,
         }
@@ -103,17 +113,9 @@ async def on_message(message):
         else:
             filter = { 'user': client.user }
   
-            # Values to be updated.
             newvalues = { "$set": { 'quantity': query_user.count + 1 } }
-            
-            # Using update_one() method for single 
-            # updation.
-            boba_count.update_one(filter, newvalues) 
-
+            r = boba_count.update_one(filter, newvalues) 
             count = query_user.count + 1
-            boba_count.delete_one(user_query)
-            user_query["boba_count"] = count
-            r = boba_count.insert_one(user_query)
             print(r)
 
         my_message = f"{client.user}'s boba count is {count}"
