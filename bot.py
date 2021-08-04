@@ -11,7 +11,6 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 client = discord.Client()
 
-# 
 mongoclient = MongoClient(MONGO_URL)
 db = client.boba_db
 
@@ -70,11 +69,44 @@ def bobafy_quote(input: str) -> str:
 async def on_ready():
     print('Ready to count boba intake as {0.user}'.format(client))
 
+
+def get_count(user):
+    user_query = {
+            "user": user,
+    }
+    query_user = boba_count.find_one(user_query)
+    if query_user is None:
+        return 0
+    else:
+        return query_user.boba_count
+
+def update_count(user):
+    user_query = {
+            "user": user,
+        }
+
+    query_user = boba_count.find_one(user_query)
+    if query_user is None:
+        count = 0
+        user_query["boba_count"] = count
+        r = boba_count.insert_one(user_query)
+        print(r)
+    else:
+        filter = { 'user': client.user }
+
+        newvalues = { "$set": { 'boba_count': query_user.count + 1 } }
+        r = boba_count.update_one(filter, newvalues) 
+        count = query_user.count + 1
+        print(r)
+    return count
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
     
+
+    # TODO: has client.user when adding to db for privacy
     
 
     if message.content.startswith('!quote'):
@@ -96,29 +128,17 @@ async def on_message(message):
     elif message.content.startswith('!boba'):
         word_list = message.split(" ")
         if len(word_list) > 2:
-            send = f"Use the boba count with 1 argument"
-            await message.channel.send(send)
-            return
-
-        user_query = {
-            "user": client.user,
-        }
-
-        query_user = boba_count.find_one(user_query)
-        if query_user is None:
-            count = 0
-            user_query["boba_count"] = count
-            r = boba_count.insert_one(user_query)
-            print(r)
-        else:
-            filter = { 'user': client.user }
-  
-            newvalues = { "$set": { 'boba_count': query_user.count + 1 } }
-            r = boba_count.update_one(filter, newvalues) 
-            count = query_user.count + 1
-            print(r)
-
-        my_message = f"{client.user}'s boba count is {count}"
-        await message.channel.send(my_message)
+            my_message = f"Use the boba count with 1 argument"
+            await message.channel.send(my_message)
+        elif word_list[:-1] == "count":
+            # user calls !boba count to get their boba count
+            count = get_count(message.user)
+            my_message = f"{client.user}'s boba count is {count}"
+            await message.channel.send(my_message)
+        elif len(word_list) == 1:
+            # user just calls !boba to increment count
+            count = update_count(message.user)
+            my_message = f"{client.user}'s boba count is now {count}"
+            await message.channel.send(my_message)
 
 client.run(os.getenv('TOKEN'))
