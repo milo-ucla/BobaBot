@@ -21,6 +21,6 @@ We will store some user information for the purposes of getting boba-count infor
 we will not sell or distribute this information to any third parties. By pinging the bot you are consenting to potentially having the 
 contents of that message stored, as well as some metadata and user information visible at the time of sending. 
 
-#TOS
+## TOS
 By using this bot you are agreeing to the terms in our license and agree to use the bot in accordance with Terms and Conditions of Discord.
 There is no warranty agreement. This is open-source code, use at your own risk. 
