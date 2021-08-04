@@ -12,7 +12,7 @@ nlp = spacy.load("en_core_web_sm")
 client = discord.Client()
 
 # 
-mongoclient = MongoClient("mongodb+srv://dbuser:YlxiFoOkwEWnwgYt@cluster0.rhw7i.mongodb.net/")
+mongoclient = MongoClient(MONGO_URL)
 db = client.boba_db
 
 boba_count = db.boba_count
