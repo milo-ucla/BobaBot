@@ -113,7 +113,7 @@ async def on_message(message):
         else:
             filter = { 'user': client.user }
   
-            newvalues = { "$set": { 'quantity': query_user.count + 1 } }
+            newvalues = { "$set": { 'boba_count': query_user.count + 1 } }
             r = boba_count.update_one(filter, newvalues) 
             count = query_user.count + 1
             print(r)
