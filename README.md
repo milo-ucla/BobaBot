@@ -16,9 +16,11 @@ the bot will log you as having consumed *int* bobas. Accepts negative numbers. D
 ### quote
 the bot will give you a motivational quote about boba.
 
-
-## PRIVACY POLICY (PLEASE READ):
+## PRIVACY POLICY (PLEASE READ)
 We will store some user information for the purposes of getting boba-count information. Any data we do collect can be seen by us and only us, 
-we will not sell or distribute this information to any third parties. By pinging the bot you are consenting to potentially having the contents of that message stored,
-as well as some metadata and user information visible at the time of sending. 
+we will not sell or distribute this information to any third parties. By pinging the bot you are consenting to potentially having the 
+contents of that message stored, as well as some metadata and user information visible at the time of sending. 
 
+#TOS
+By using this bot you are agreeing to the terms in our license (MIT) and agree to use the bot in accordance with Terms and Conditions of Discord.
+There is no warranty agreement. This is open-source code, use at your own risk. 
