@@ -5,33 +5,27 @@ import requests
 import json
 from dotenv import load_dotenv
 from pymongo import MongoClient
-
 import random
 import spacy
+
+load_dotenv()
+
 nlp = spacy.load("en_core_web_sm")
 client = discord.Client()
 
-mongoclient = MongoClient(MONGO_URL)
+mongoclient = MongoClient(os.getenv("MONGO_URL"))
 db = client.boba_db
 
 boba_count = db.boba_count
 
-load_dotenv()
 
-'''
-TO DO
-NLP: The part-of-speech is course right now, only identifying NOUN or not
-    it should instead be more fine, only replacing parts of speech that can be "boba". 
-    Once this is done, the tog bool should be removed or adjusted.
-
-DB: When a user logs boba
-'''
 def get_quote():
     response = requests.get("https://zenquotes.io/api/random")
     json_data = json.loads(response.text)
     quote = json_data[0]['q']
     print(quote)
     return [quote, json_data[0]['a']]
+
 
 def bobafy_quote(input: str) -> str:
     message = input
@@ -81,10 +75,10 @@ def get_count(user):
         return query_user.boba_count
 
 def update_count(user):
+    # TODO: hash client.user when adding to db for privacy
     user_query = {
             "user": user,
-        }
-
+    }
     query_user = boba_count.find_one(user_query)
     if query_user is None:
         count = 0
@@ -104,10 +98,6 @@ def update_count(user):
 async def on_message(message):
     if message.author == client.user:
         return
-    
-
-    # TODO: has client.user when adding to db for privacy
-    
 
     if message.content.startswith('!quote'):
         quote = get_quote()
