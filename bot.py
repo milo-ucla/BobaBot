@@ -75,21 +75,20 @@ def get_count(user):
     else:
         return query_user["boba_count"]
 
-def update_count(user):
+def update_count(user, increment = 1):
     user_query = {
             "user": user,
     }
     query_user = boba_count_db.find_one(user_query)
     if query_user is None:
-        count = 1
+        count = increment
         user_query["boba_count"] = count
         boba_count_db.insert_one(user_query)
     else:
         filter = { 'user': user }
-
-        newvalues = { "$set": { 'boba_count': query_user["boba_count"] + 1 } }
+        newvalues = { "$set": { 'boba_count': query_user["boba_count"] + increment } }
         boba_count_db.update_one(filter, newvalues) 
-        count = query_user["boba_count"] + 1
+        count = query_user["boba_count"] + increment
     return count
 
 @client.event
@@ -108,7 +107,7 @@ async def on_message(message):
         fullquote = quote[0] + " - " + quote[1]
         await message.channel.send(my_message + '\n||' + fullquote +'||')
 
-    if message.content.startswith('!boba?'):
+    elif message.content.startswith('!boba?'):
         my_message = "I can't say, not until Milo codes this bot better"
         yn = random.choice([True, False])
         if(yn):
@@ -119,18 +118,28 @@ async def on_message(message):
 
     elif message.content.startswith('!boba'):
         word_list = message.content.split(" ")
-        if len(word_list) > 2:
-            my_message = f"Use the boba count with 1 argument"
+        if len(word_list) > 2 or word_list[-1] == "help":
+            my_message = f"Use the boba count with 1 argument.\nType `count` to get your boba count, type `integer` to add to your boba count (default: 1)"
             await message.channel.send(my_message)
         elif word_list[-1] == "count":
             # user calls !boba count to get their boba count
             count = get_count(username)
             my_message = f"{username_raw}'s boba count is {count}"
             await message.channel.send(my_message)
+        elif len(word_list) == 2:
+            incr = 0
+            my_message = "Error: unhandled exception"
+            try:
+                incr = int(word_list[-1])
+                count = update_count(username, incr)
+                my_message = f"{username_raw}'s boba count is now {count}"
+            except:
+                my_message = "Error: second arg invalid. Try `!boba help` for more information."
+            # user just calls !boba to increment count
+            await message.channel.send(my_message)
         elif len(word_list) == 1:
             # user just calls !boba to increment count
             count = update_count(username)
             my_message = f"{username_raw}'s boba count is now {count}"
             await message.channel.send(my_message)
-
 client.run(os.getenv('TOKEN'))
