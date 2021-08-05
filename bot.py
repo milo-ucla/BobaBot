@@ -119,7 +119,7 @@ async def on_message(message):
     elif message.content.startswith('!boba'):
         word_list = message.content.split(" ")
         if len(word_list) > 2 or word_list[-1] == "help":
-            my_message = f"Use the boba count with 1 argument.\nType `count` to get your boba count, type `integer` to add to your boba count (default: 1)"
+            my_message = f"Use the boba count with 1 argument.\nType `count` to get your boba count, type `integer` to add to your boba count (default: 1).\nFor more information, try !boba info"
             await message.channel.send(my_message)
         elif word_list[-1] == "count":
             # user calls !boba count to get their boba count
