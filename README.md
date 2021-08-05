@@ -10,9 +10,9 @@ all commands begin with `!`
 ### boba?
 the bot will tell you if you should get boba
 ### boba
-the bot will tell you how much boba you have logged
-### boba *integer*
-the bot will log you as having consumed *int* bobas. Accepts negative numbers. Default is 1.
+will increase your boba count by 1 and return your boba count
+### boba count
+will return your boba count
 ### quote
 the bot will give you a motivational quote about boba.
 
