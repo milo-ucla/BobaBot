@@ -7,29 +7,30 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 import random
 import spacy
+import re
+import hashlib
 
 load_dotenv()
 
-nlp = spacy.load("en_core_web_sm")
 client = discord.Client()
 
 mongoclient = MongoClient(os.getenv("MONGO_URL"))
-db = client.boba_db
 
-boba_count = db.boba_count
+db = mongoclient.boba_db
+
+boba_count_db = db.boba_count
 
 
 def get_quote():
     response = requests.get("https://zenquotes.io/api/random")
     json_data = json.loads(response.text)
     quote = json_data[0]['q']
-    print(quote)
     return [quote, json_data[0]['a']]
 
 
-def bobafy_quote(input: str) -> str:
-    message = input
-    doc = nlp(input)
+def bobafy_quote(message):
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(message)
     first = True
     tog = True
     replaced = []
@@ -68,30 +69,27 @@ def get_count(user):
     user_query = {
             "user": user,
     }
-    query_user = boba_count.find_one(user_query)
+    query_user = boba_count_db.find_one(user_query)
     if query_user is None:
         return 0
     else:
-        return query_user.boba_count
+        return query_user["boba_count"]
 
 def update_count(user):
-    # TODO: hash client.user when adding to db for privacy
     user_query = {
             "user": user,
     }
-    query_user = boba_count.find_one(user_query)
+    query_user = boba_count_db.find_one(user_query)
     if query_user is None:
-        count = 0
+        count = 1
         user_query["boba_count"] = count
-        r = boba_count.insert_one(user_query)
-        print(r)
+        boba_count_db.insert_one(user_query)
     else:
-        filter = { 'user': client.user }
+        filter = { 'user': user }
 
-        newvalues = { "$set": { 'boba_count': query_user.count + 1 } }
-        r = boba_count.update_one(filter, newvalues) 
-        count = query_user.count + 1
-        print(r)
+        newvalues = { "$set": { 'boba_count': query_user["boba_count"] + 1 } }
+        boba_count_db.update_one(filter, newvalues) 
+        count = query_user["boba_count"] + 1
     return count
 
 @client.event
@@ -99,6 +97,11 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    channel = message.channel.id 
+    # TODO: make the database corespond to the server
+
+    username_raw = str(message.author).split("#")[0]
+    username = hashlib.sha256(username_raw.encode('utf-8')).hexdigest()
     if message.content.startswith('!quote'):
         quote = get_quote()
         my_message = bobafy_quote(quote[0])
@@ -108,7 +111,6 @@ async def on_message(message):
     if message.content.startswith('!boba?'):
         my_message = "I can't say, not until Milo codes this bot better"
         yn = random.choice([True, False])
-        print(yn)
         if(yn):
             my_message = "Yes, go get some boba!"
         else:
@@ -116,19 +118,19 @@ async def on_message(message):
         await message.channel.send(my_message)
 
     elif message.content.startswith('!boba'):
-        word_list = message.split(" ")
+        word_list = message.content.split(" ")
         if len(word_list) > 2:
             my_message = f"Use the boba count with 1 argument"
             await message.channel.send(my_message)
-        elif word_list[:-1] == "count":
+        elif word_list[-1] == "count":
             # user calls !boba count to get their boba count
-            count = get_count(message.user)
-            my_message = f"{client.user}'s boba count is {count}"
+            count = get_count(username)
+            my_message = f"{username_raw}'s boba count is {count}"
             await message.channel.send(my_message)
         elif len(word_list) == 1:
             # user just calls !boba to increment count
-            count = update_count(message.user)
-            my_message = f"{client.user}'s boba count is now {count}"
+            count = update_count(username)
+            my_message = f"{username_raw}'s boba count is now {count}"
             await message.channel.send(my_message)
 
 client.run(os.getenv('TOKEN'))
