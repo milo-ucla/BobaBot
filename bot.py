@@ -127,7 +127,7 @@ async def on_message(message):
             my_message = f"{username_raw}'s boba count is {count}"
             await message.channel.send(my_message)
         elif word_list[-1] == "info":
-            my_message = "[more info](https://github.com/milo-ucla/BobaBot/blob/4f25e9e1472c81d0dcc14efe334f653d9a738e41/README.md)"
+            my_message = "https://github.com/milo-ucla/BobaBot/blob/4f25e9e1472c81d0dcc14efe334f653d9a738e41/README.md"
             await message.channel.send(my_message)
         elif len(word_list) == 2:
             incr = 0
