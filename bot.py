@@ -99,8 +99,7 @@ async def on_message(message):
     channel = message.channel.id 
     # TODO: make the database corespond to the server
 
-    username_raw = str(message.author).split("#")[0]
-    username = hashlib.sha256(username_raw.encode('utf-8')).hexdigest()
+    username = str(message.author).split("#")[0]
     if message.content.startswith('!boba quote'):
         quote = get_quote()
         my_message = bobafy_quote(quote[0])
@@ -124,7 +123,7 @@ async def on_message(message):
         elif word_list[-1] == "count":
             # user calls !boba count to get their boba count
             count = get_count(username)
-            my_message = f"{username_raw}'s boba count is {count}"
+            my_message = f"{username}'s boba count is {count}"
             await message.channel.send(my_message)
         elif word_list[-1] == "info":
             my_message = "https://github.com/milo-ucla/BobaBot/blob/4f25e9e1472c81d0dcc14efe334f653d9a738e41/README.md"
@@ -135,7 +134,7 @@ async def on_message(message):
             try:
                 incr = int(word_list[-1])
                 count = update_count(username, incr)
-                my_message = f"{username_raw}'s boba count is now {count}"
+                my_message = f"{username}'s boba count is now {count}"
             except:
                 my_message = "Error: second arg invalid. Try `!boba help` for more information."
             # user just calls !boba to increment count
@@ -143,6 +142,6 @@ async def on_message(message):
         elif len(word_list) == 1:
             # user just calls !boba to increment count
             count = update_count(username)
-            my_message = f"{username_raw}'s boba count is now {count}"
+            my_message = f"{username}'s boba count is now {count}"
             await message.channel.send(my_message)
 client.run(os.getenv('TOKEN'))
