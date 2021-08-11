@@ -76,7 +76,8 @@ def get_count(user):
         return query_user["boba_count"]
 
 
-def update_count(collection, user, increment=1):
+def update_count(channel, user, increment=1):
+    collection = db[str(channel)]
     user_query = {
             "user": user,
     }
@@ -93,17 +94,22 @@ def update_count(collection, user, increment=1):
     return count
 
 
-def update_across_databases(user, value=1):
-    collections = db.list_collection_names()
-    count = None
-    for collection_name in collections:
-        collection = db[str(collection_name)]
-        count = update_count(collection, user, value)
-    return count
+def add_user_to_server_db(user, server: str):
+    collection = db[server]
+    user_query = {
+            "user": user,
+    }
+    query_user = collection.find_one(user_query)
+    if query_user is None:
+        collection.insert_one(user_query)
 
 
 async def handle_boba(message):
     username = str(message.author).split("#")[0]
+    channel = str(message.guild)
+
+    add_user_to_server_db(username, channel)
+    
     word_list = message.content.split(" ")
     if len(word_list) > 2 or word_list[-1] == "help":
         my_message = f"Use the boba count with 1 argument.\nType `count` to get your boba count, type `integer` to add to your boba count (default: 1).\nFor more information, try !boba info"
@@ -121,7 +127,7 @@ async def handle_boba(message):
         my_message = "Error: unhandled exception"
         try:
             incr = int(word_list[-1])
-            count = update_across_databases(username, incr)
+            count =  update_count(channel, username, incr)  # update_across_databases(username, incr)
             my_message = f"{username}'s boba count is now {count}"
         except:
             my_message = "Error: second arg invalid. Try `!boba help` for more information."
@@ -129,7 +135,7 @@ async def handle_boba(message):
         await message.channel.send(my_message)
     elif len(word_list) == 1:
         # user just calls !boba to increment count
-        count = update_across_databases(username)
+        count = update_count(channel, username)
         my_message = f"{username}'s boba count is now {count}"
         await message.channel.send(my_message)
 
