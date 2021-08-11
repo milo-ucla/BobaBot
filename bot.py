@@ -64,8 +64,7 @@ async def on_ready():
 
 
 def get_count(user):
-    collection_name = db.list_collection_names()[0]
-    collection = db.collection_name
+    collection = db.boba_count
     user_query = {
             "user": user,
     }
@@ -76,8 +75,8 @@ def get_count(user):
         return query_user["boba_count"]
 
 
-def update_count(channel, user, increment=1):
-    collection = db[str(channel)]
+def update_count(user, increment=1):
+    collection = db.boba_count
     user_query = {
             "user": user,
     }
@@ -127,7 +126,7 @@ async def handle_boba(message):
         my_message = "Error: unhandled exception"
         try:
             incr = int(word_list[-1])
-            count =  update_count(channel, username, incr)  # update_across_databases(username, incr)
+            count =  update_count(username, incr)  # update_across_databases(username, incr)
             my_message = f"{username}'s boba count is now {count}"
         except:
             my_message = "Error: second arg invalid. Try `!boba help` for more information."
@@ -135,7 +134,7 @@ async def handle_boba(message):
         await message.channel.send(my_message)
     elif len(word_list) == 1:
         # user just calls !boba to increment count
-        count = update_count(channel, username)
+        count = update_count(username)
         my_message = f"{username}'s boba count is now {count}"
         await message.channel.send(my_message)
 
