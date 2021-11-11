@@ -1,5 +1,7 @@
-# BobaBot
+# BobaBot 🧋
 A discord bot 'BobaBot' that adds boba-themed functionality.
+
+Unfortunately, this bot is not public for the time being :/ 
 
 ## BUILD / RUN:
 To build this app, simply run the bot.py file with Python3. You will need to install all dependencies,
