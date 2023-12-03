@@ -20,13 +20,9 @@ the bot will give you a motivational quote about boba.
 ### boba help
 the bot will output information on these commands.
 ### boba info
-the bot will output a link to this page.
-
-## PRIVACY POLICY (PLEASE READ)
-We will store some user information for the purposes of getting boba-count information. Any data we do collect can be seen by us and only us, 
-we will not sell or distribute this information to any third parties. By pinging the bot you are consenting to potentially having the 
-contents of that message stored, as well as your username and other metainformation visible at the time of sending. 
+the bot will output a link to this page. 
 
 ## TOS
-By using this bot you are agreeing to the terms in our license and agree to use the bot in accordance with Terms and Conditions of Discord.
-There is no warranty agreement. This is open-source code, use at your own risk. 
+By using this bot on Discord, you are bound by Discord TOS.
+This code is provided as-is with no warranty. Use at your own risk.
+ 
